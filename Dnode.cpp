@@ -39,7 +39,7 @@ Dnode* Dnode::getNext()
 
 Dnode* Dnode::getPrev()
 {
-	return getPrev();
+	return prev;
 }
 
 void Dnode::setNext(Dnode* destination)

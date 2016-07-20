@@ -1,4 +1,4 @@
-OBJS = Node.o Dnode.o List.o Dlist.o CircularList.o Stack.o Queue.o BinTree.o Main.o
+OBJS = Node.o Dnode.o List.o Dlist.o CircularList.o Stack.o Queue.o BinTree.o Heap.o Main.o
 CC = g++
 DEBUG = -g -ggdb
 CFLAGS = $(DEBUG) -Wall -c
@@ -30,6 +30,9 @@ Queue : Queue.h Queue.cpp
 	
 BinTree : BinTree.h BinTree.cpp
 	$(CC) $(CFLAGS) BinTree.cpp
+	
+Heap : Heap.h Heap.cpp
+	$(CC) $(CFLAGS) Heap.cpp
 	
 clean:
 	\rm *.o

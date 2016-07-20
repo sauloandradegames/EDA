@@ -25,7 +25,7 @@ class BinTree
 		int remove(int value); // Remove o elemento especificado na arvore
 		int search(int value); // Executa uma busca em ordem na arvore
 		int isEmpty(); // Verifica se a arvore esta vazia
-		int printOrder(Dnode *node); // Imprime os nos da arvore a partir de uma busca em ordem
+		void printOrder(Dnode *node); // Imprime os nos da arvore a partir de uma busca em ordem
 		int printPre(Dnode *node); // Imprime os nos da arvore a partir de uma busca pre-ordem
 		int printPost(Dnode *node); // Imprime os nos da arvore a partir de uma busca pos-ordem
 		//TODO: criar metodo para balanceamento da arvore

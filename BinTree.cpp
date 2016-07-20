@@ -47,7 +47,7 @@ int BinTree::insert(int value)
 		}
 		else // Caso geral: busca em ordem e insira no melhor local
 		{
-			while (where->getNext() != NULL && where->getPrev() != NULL)
+			while (where->getNext() != NULL || where->getPrev() != NULL)
 			{
 				if ((value < where->getValue()) ? where = where->getPrev() : where = where->getNext());
 			}
@@ -193,25 +193,25 @@ int BinTree::isEmpty()
 	return -1;
 }
 
-int BinTree::printOrder(Dnode *node)
+void BinTree::printOrder(Dnode *node)
 {
 	/* Imprime os nos da arvore a partir de uma busca em ordem
 	 * Busca em ordem: esquerda -> visita -> direita
 	 */
 	if (node == NULL)
 	{
-		cout << "1";
-		return 0;
+		cout << "-";
 	}
 	else
 	{
-		cout << " left ";
+		cout << "L";
 		printOrder(node->getPrev());
+		
 		cout << "|" << node->getValue() << "|";
-		cout << " right ";
+		
+		cout << "R";
 		printOrder(node->getNext());
 	}
-	return -1;
 }
 
 int BinTree::printPre(Dnode *node)
@@ -227,9 +227,7 @@ int BinTree::printPre(Dnode *node)
 	else
 	{
 		cout << "|" << node->getValue() << "|";
-		cout << " left ";
 		printPre(node->getPrev());
-		cout << " right ";
 		printPre(node->getNext());
 	}
 	return -1;
@@ -247,9 +245,7 @@ int BinTree::printPost(Dnode *node)
 	}
 	else
 	{
-		cout << " left ";
 		printPost(node->getPrev());
-		cout << " right ";
 		printPost(node->getNext());
 		cout << "|" << node->getValue() << "|";
 	}

@@ -1,23 +1,25 @@
 // Main.cpp
 // Programa principal, usando estruturas implementadas
 
-#include "BinTree.h"
 #include "Dlist.h"
 #include "List.h"
 #include "Stack.h"
 #include "Queue.h"
 #include "CircularList.h"
+#include "Heap.h"
 #include <iostream>
 using namespace std;
 
 int main()
 {	
-	BinTree t;
+	Heap t;
 	
-	t.insert(1);
-	t.insert(15);
+	t.insert(60);
+	t.insert(33);
+	t.insert(44);
 	
-	t.printOrder(NULL);
+	t.printOrder(t.getRoot());
+	cout << endl;
 	
 	return 0;
 }
