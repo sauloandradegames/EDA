@@ -15,7 +15,6 @@ class Heap : public BinTree
 /*------------------------ METODOS: GET E SET ------------------------*/
 		Dnode* getMaxHeap();
 /*--------------------------- METODOS: CRUD --------------------------*/
-		int insert(int new_value);
 		int deleteMinHeap();
 		void merge();
 		void heapify();

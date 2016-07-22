@@ -12,13 +12,19 @@ using namespace std;
 
 int main()
 {	
-	Heap t;
+	BinTree t;
 	
-	t.insert(60);
-	t.insert(33);
-	t.insert(44);
-	
-	t.printOrder(t.getRoot());
+	t.insert(100);
+	t.insert(19);
+	t.insert(36);
+	t.insert(17);
+	t.insert(3);
+	t.insert(25);
+	t.insert(1);
+	t.insert(2);
+	t.insert(7);
+
+	t.printPre(t.getRoot());
 	cout << endl;
 	
 	return 0;

@@ -33,12 +33,14 @@ int BinTree::insert(int value)
 	 * Retorna 0 em caso de insercao com exito, -1 caso contrario 
 	 */
 	Dnode *toInsert = new Dnode(value); // Node a ser inserido na arvore
-	Dnode *where = new Dnode; // Ponteiro para onde inserir
+	Dnode *target = new Dnode; // Ponteiro que navega pela arvore
+	Dnode *where = new Dnode; // Ponteiro que segue atras de target e define onde inserir
 	
 	// Verificar se o elemento ja existe na arvore
 	if (search(value) != 0)
 	{
-		where = root;
+		target = root;
+		where = NULL;
 		
 		if (isEmpty() == 0) // Caso arvore vazia: insira na raiz da arvore
 		{
@@ -47,9 +49,18 @@ int BinTree::insert(int value)
 		}
 		else // Caso geral: busca em ordem e insira no melhor local
 		{
-			while (where->getNext() != NULL || where->getPrev() != NULL)
+			while (target != NULL)
 			{
-				if ((value < where->getValue()) ? where = where->getPrev() : where = where->getNext());
+				if (value < target->getValue())
+				{
+					where = target;
+					target = target->getPrev();
+				}
+				else
+				{
+					where = target;
+					target = target->getNext();
+				}
 			}
 			if (value < where->getValue())
 			{
@@ -221,13 +232,17 @@ int BinTree::printPre(Dnode *node)
 	 */
 	if (node == NULL)
 	{
-		cout << endl;
+		cout << "-";
 		return 0;
 	}
 	else
 	{
 		cout << "|" << node->getValue() << "|";
+		
+		cout << "L";
 		printPre(node->getPrev());
+		
+		cout << "R";
 		printPre(node->getNext());
 	}
 	return -1;
@@ -240,13 +255,17 @@ int BinTree::printPost(Dnode *node)
 	 */
 	if (node == NULL)
 	{
-		cout << endl;
+		cout << "-";
 		return 0;
 	}
 	else
 	{
+		cout << "L";
 		printPost(node->getPrev());
+		
+		cout << "R";
 		printPost(node->getNext());
+		
 		cout << "|" << node->getValue() << "|";
 	}
 	return -1;

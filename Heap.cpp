@@ -3,16 +3,13 @@
 
 #include "Heap.h"
 
-Heap::Heap()
-{
-}
+Heap::Heap(){}
 
 Dnode* Heap::getMaxHeap()
 {
-	return root;
+	return getRoot();
 }
 
-//int insert(int new_value);
 //int deleteMinHeap();
 //void merge();
 //void heapify();
