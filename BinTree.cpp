@@ -1,8 +1,6 @@
 // BinTree.cpp
 // Implementacao de arvore de busca binaria
 
-// TODO: CONSERTAR TRANSVERSAIS
-
 #include "BinTree.h"
 #include <iostream>
 using namespace std;
@@ -14,16 +12,40 @@ BinTree::BinTree()
 }
 
 /*------------------------ METODOS: GET E SET ------------------------*/
-Dnode* BinTree::getRoot()
+Tnode* BinTree::getRoot()
 {
 	/* Retorna node da raiz da arvore */
 	return root;
 }
 
-void BinTree::setRoot(Dnode* destination)
+void BinTree::setRoot(Tnode* destination)
 {
 	/* Configura node da raiz da arvore */
 	root = destination;
+}
+
+int BinTree::getHeight(Tnode *root)
+{
+	/* Retorna a altura da arvore de raiz root
+	 * Extraido do material em http://www.ime.usp.br/~pf/algoritmos/aulas/bint.html
+	 */
+	if (root == NULL)
+	{
+		return -1;
+	}
+	else
+	{
+		int height_left = getHeight(root->getLeft());
+		int height_right = getHeight(root->getRight());
+		if (height_left > height_right)
+		{
+			return height_left + 1;
+		}
+		else
+		{
+			return height_right + 1;
+		}
+	}
 }
 
 /*--------------------------- METODOS: CRUD --------------------------*/
@@ -32,9 +54,9 @@ int BinTree::insert(int value)
 	/* Insere um novo elemento na arvore
 	 * Retorna 0 em caso de insercao com exito, -1 caso contrario 
 	 */
-	Dnode *toInsert = new Dnode(value); // Node a ser inserido na arvore
-	Dnode *target = new Dnode; // Ponteiro que navega pela arvore
-	Dnode *where = new Dnode; // Ponteiro que segue atras de target e define onde inserir
+	Tnode *toInsert = new Tnode(value); // Node a ser inserido na arvore
+	Tnode *target = new Tnode; // Ponteiro que navega pela arvore
+	Tnode *where = new Tnode; // Ponteiro que segue atras de target e define onde inserir
 	
 	// Verificar se o elemento ja existe na arvore
 	if (search(value) != 0)
@@ -42,34 +64,38 @@ int BinTree::insert(int value)
 		target = root;
 		where = NULL;
 		
-		if (isEmpty() == 0) // Caso arvore vazia: insira na raiz da arvore
+		if (isEmpty() == 0)
 		{
+			// Caso arvore vazia: insira na raiz da arvore
 			root = toInsert;
 			return 0;
 		}
-		else // Caso geral: busca em ordem e insira no melhor local
+		else
 		{
+			// Caso geral: busca em ordem e insira no melhor local
 			while (target != NULL)
 			{
 				if (value < target->getValue())
 				{
 					where = target;
-					target = target->getPrev();
+					target = target->getLeft();
 				}
 				else
 				{
 					where = target;
-					target = target->getNext();
+					target = target->getRight();
 				}
 			}
 			if (value < where->getValue())
 			{
-				where->setPrev(toInsert);
+				where->setLeft(toInsert);
+				updateBF(root);
 				return 0;
 			}
 			else
 			{
-				where->setNext(toInsert);
+				where->setRight(toInsert);
+				updateBF(root);
 				return 0;
 			}
 		}
@@ -82,9 +108,9 @@ int BinTree::remove(int value)
 	/* Remove o valor especificado na arvore
 	 * Retorna 0 caso o valor seja removido, -1 caso contrario.
 	 */
-	Dnode *toRemove = new Dnode; // Ponteiro para o node a ser removido
-	Dnode *father = new Dnode; // Ponteiro para o node pai do node a ser removido
-	Dnode *substitute = new Dnode; // Ponteiro para o sucessor do node a ser removido
+	Tnode *toRemove = new Tnode; // Ponteiro para o node a ser removido
+	Tnode *father = new Tnode; // Ponteiro para o node pai do node a ser removido
+	Tnode *substitute = new Tnode; // Ponteiro para o sucessor do node a ser removido
 	char direction = '-'; // flag: indica qual foi a ultima direcao tomada durante a busca (l ou r)
 	 
 	// Verifique se a arvore esta vazia
@@ -92,72 +118,84 @@ int BinTree::remove(int value)
 	{
 		toRemove = root;
 		father = NULL;
-		while (toRemove->getValue() != value && (toRemove->getPrev() != NULL || toRemove->getNext() != NULL))
+		
+		// Procure pelo node a ser removido e determine seu pai e seu sucessor
+		while (toRemove->getValue() != value && (toRemove->getLeft() != NULL || toRemove->getRight() != NULL))
 		{
 			if (value < toRemove->getValue())
 			{
 				father = toRemove;
-				toRemove = toRemove->getPrev();
+				toRemove = toRemove->getLeft();
 				direction = 'l';
 			}
 			else if (value > toRemove->getValue())
 			{
 				father = toRemove;
-				toRemove = toRemove->getNext();
+				toRemove = toRemove->getRight();
 				direction = 'r';
 			}
 		}
+		
 		if (toRemove->getValue() == value)
 		{
-			if (toRemove->getPrev() == NULL && toRemove->getNext() == NULL)
+			if (toRemove->getLeft() == NULL && toRemove->getRight() == NULL)
 			{
-				// remover node folha
+				// Remover node folha
+				// Pai do node aponta para NULL
 				if (direction == 'l')
 				{
-					father->setPrev(NULL);
+					// Node eh filho a esquerda
+					father->setLeft(NULL);
 				}
 				else
 				{
-					father->setNext(NULL);
+					// Node eh filho a direita
+					father->setRight(NULL);
 				}
 				delete toRemove;
 				return 0;
 			}
-			else if (toRemove->getPrev() != NULL && toRemove->getNext() == NULL)
+			else if (toRemove->getLeft() != NULL && toRemove->getRight() == NULL)
 			{
-				// remover node com 1 filho a esquerda
+				// Remover node com 1 filho a esquerda
+				// Sucessor do node passa a ser filho a esquerda de seu antigo pai
+				// Sucessor tem altura decrementada em 1
 				if (direction == 'l')
 				{
-					father->setPrev(toRemove->getPrev());
+					father->setLeft(toRemove->getLeft());
 				}
 				else
 				{
-					father->setNext(toRemove->getPrev());
+					father->setRight(toRemove->getLeft());
 				}
 				delete toRemove;
 				return 0;
 			}
-			else if (toRemove->getPrev() == NULL && toRemove->getNext() != NULL)
+			else if (toRemove->getLeft() == NULL && toRemove->getRight() != NULL)
 			{
-				// remover node com 1 filho a direita
+				// Remover node com 1 filho a direita
+				// Sucessor do node passa a ser filho a direita de seu antigo pai
+				// Sucessor tem altura decrementada em 1
 				if (direction == 'l')
 				{
-					father->setPrev(toRemove->getNext());
+					father->setLeft(toRemove->getRight());
 				}
 				else
 				{
-					father->setNext(toRemove->getNext());
+					father->setRight(toRemove->getRight());
 				}
 				delete toRemove;
 				return 0;
 			}
 			else
 			{
-				// remover node com 2 filhos
-				substitute = toRemove->getNext();
-				while (substitute->getPrev() != NULL)
+				// Remover node com 2 filhos
+				// Valor do node passa a ser valor de seu sucessor
+				// Remova o sucessor no lugar do node
+				substitute = toRemove->getRight();
+				while (substitute->getLeft() != NULL)
 				{
-					substitute = substitute->getPrev();
+					substitute = substitute->getLeft();
 				}
 				toRemove->setValue(substitute->getValue());
 				remove(substitute->getValue());
@@ -174,11 +212,11 @@ int BinTree::search(int value)
 	 */
 	if (isEmpty() != 0)
 	{
-		Dnode *p = new Dnode;
+		Tnode *p = new Tnode;
 		p = getRoot();
 		while (p != NULL && p->getValue() != value)
 		{
-			if (value < p->getValue() ? (p = p->getPrev()) : (p = p->getNext()));
+			if (value < p->getValue() ? (p = p->getLeft()) : (p = p->getRight()));
 		}
 		if (p == NULL)
 		{
@@ -188,6 +226,29 @@ int BinTree::search(int value)
 		{
 			return 0;
 		}
+	}
+	return -1;
+}
+
+int BinTree::updateBF(Tnode* node)
+{
+	/* Atualiza fator de balanceamento dos nodes da arvore apos insercao */
+	if (node == NULL)
+	{
+		return 0;
+	}
+	else
+	{
+		// Calcula a altura da subarvore esquerda e direita de node
+		// Atualiza balance factor do node com a diferenca dessas alturas
+		int height_l = 0; // Altura da subarvore esquerda
+		int height_r = 0; // Altura da subarvore direita
+		height_l = getHeight(node->getLeft());
+		height_r = getHeight(node->getRight());
+		node->setBalanceFactor(height_l - height_r);
+		
+		updateBF(node->getLeft());
+		updateBF(node->getRight());
 	}
 	return -1;
 }
@@ -204,7 +265,7 @@ int BinTree::isEmpty()
 	return -1;
 }
 
-void BinTree::printOrder(Dnode *node)
+void BinTree::printOrder(Tnode *node)
 {
 	/* Imprime os nos da arvore a partir de uma busca em ordem
 	 * Busca em ordem: esquerda -> visita -> direita
@@ -216,16 +277,16 @@ void BinTree::printOrder(Dnode *node)
 	else
 	{
 		cout << "L";
-		printOrder(node->getPrev());
+		printOrder(node->getLeft());
 		
 		cout << "|" << node->getValue() << "|";
 		
 		cout << "R";
-		printOrder(node->getNext());
+		printOrder(node->getRight());
 	}
 }
 
-int BinTree::printPre(Dnode *node)
+int BinTree::printPre(Tnode *node)
 {
 	/* Imprime os nos da arvore a partir de uma busca pre-ordem
 	 * Busca pre-ordem: visita->esquerda->direita
@@ -237,18 +298,18 @@ int BinTree::printPre(Dnode *node)
 	}
 	else
 	{
-		cout << "|" << node->getValue() << "|";
+		cout << "|" << node->getValue() << ":" << node->getBalanceFactor() << "|";
 		
 		cout << "L";
-		printPre(node->getPrev());
+		printPre(node->getLeft());
 		
 		cout << "R";
-		printPre(node->getNext());
+		printPre(node->getRight());
 	}
 	return -1;
 }
 
-int BinTree::printPost(Dnode *node)
+int BinTree::printPost(Tnode *node)
 {
 	/* Imprime os nos da arvore a partir de uma busca pos-ordem
 	 * Busca pos-ordem: esquerda->direita->visita
@@ -261,10 +322,10 @@ int BinTree::printPost(Dnode *node)
 	else
 	{
 		cout << "L";
-		printPost(node->getPrev());
+		printPost(node->getLeft());
 		
 		cout << "R";
-		printPost(node->getNext());
+		printPost(node->getRight());
 		
 		cout << "|" << node->getValue() << "|";
 	}

@@ -5,7 +5,7 @@
 
 Heap::Heap(){}
 
-Dnode* Heap::getMaxHeap()
+Tnode* Heap::getMaxHeap()
 {
 	return getRoot();
 }

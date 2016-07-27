@@ -4,7 +4,7 @@
 #ifndef HEAP_H
 #define HEAP_H
 
-#include "Dnode.h"
+#include "Tnode.h"
 #include "BinTree.h"
 
 class Heap : public BinTree
@@ -13,7 +13,7 @@ class Heap : public BinTree
 /*--------------------------- CONSTRUTORES ---------------------------*/
 		Heap();
 /*------------------------ METODOS: GET E SET ------------------------*/
-		Dnode* getMaxHeap();
+		Tnode* getMaxHeap();
 /*--------------------------- METODOS: CRUD --------------------------*/
 		int deleteMinHeap();
 		void merge();

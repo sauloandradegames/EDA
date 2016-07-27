@@ -1,4 +1,4 @@
-OBJS = Node.o Dnode.o List.o Dlist.o CircularList.o Stack.o Queue.o BinTree.o Heap.o Main.o
+OBJS = Node.o Dnode.o Tnode.o List.o Dlist.o CircularList.o Stack.o Queue.o BinTree.o Heap.o Main.o
 CC = g++
 DEBUG = -g -ggdb
 CFLAGS = $(DEBUG) -Wall -c
@@ -12,6 +12,9 @@ Node : Node.h Node.cpp
 	
 Dnode : Dnode.h Dnode.cpp
 	$(CC) $(CFLAGS) Dnode.cpp
+	
+Tnode : Tnode.h Tnode.cpp
+	$(CC) $(CFLAGS) Tnode.cpp
 	
 List : List.h List.cpp
 	$(CC) $(CFLAGS) List.cpp
