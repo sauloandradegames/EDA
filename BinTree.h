@@ -28,8 +28,13 @@ class BinTree
 		int updateBF(Tnode* node); // Atualiza fator de balanceamento de cada node apos inserção
 		int isEmpty(); // Verifica se a arvore esta vazia
 		void printOrder(Tnode *node); // Imprime os nos da arvore a partir de uma busca em ordem
-		int printPre(Tnode *node); // Imprime os nos da arvore a partir de uma busca pre-ordem
-		int printPost(Tnode *node); // Imprime os nos da arvore a partir de uma busca pos-ordem
+		void printPre(Tnode *node); // Imprime os nos da arvore a partir de uma busca pre-ordem
+		void printPost(Tnode *node); // Imprime os nos da arvore a partir de uma busca pos-ordem
+		void balanceCheck(Tnode *node); // Verifica se a arvore de raiz node esta balanceada
+		void rotateLeft(Tnode *father, Tnode *pivot); // Executa rotacao esquerda na arvore de raiz father
+		void rotateRight(Tnode *father, Tnode *pivot); // Executa rotacao direita na arvore de raiz father
+		void rotateDoubleLeft(Tnode *father, Tnode *pivot); // Executa rotacao dupla a esquerda na arvore de raiz father
+		void rotateDoubleRight(Tnode *father, Tnode *pivot); // Executa rotacao dupla a direita na arvore de raiz father
 		//TODO: criar metodo para balanceamento da arvore
 };
 

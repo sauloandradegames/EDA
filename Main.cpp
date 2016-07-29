@@ -85,9 +85,6 @@ int main()
 	t.printPre(t.getRoot());
 	cout << endl;
 	
-	cout << t.getHeight(t.getRoot()) << endl;
-	cout << endl;
-	
 	return 0;
 }
 
@@ -98,5 +95,6 @@ int main()
  * [X] Filas
  * [X] Pilhas
  * [X] Arvore de busca binaria
+ * [ ] Balanceamento de arvore
  * [ ] Heap
  */
