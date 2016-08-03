@@ -155,7 +155,9 @@ int BinTree::remove(int value)
 					// Node eh filho a direita
 					father->setRight(NULL);
 				}
-				delete toRemove;
+				delete toRemove; cout << "1\n";
+				updateBF(root);
+				balanceCheck(root, NULL);
 				return 0;
 			}
 			else if (toRemove->getLeft() != NULL && toRemove->getRight() == NULL)
@@ -171,7 +173,9 @@ int BinTree::remove(int value)
 				{
 					father->setRight(toRemove->getLeft());
 				}
-				delete toRemove;
+				delete toRemove; cout << "2\n";
+				updateBF(root);
+				balanceCheck(root, NULL);
 				return 0;
 			}
 			else if (toRemove->getLeft() == NULL && toRemove->getRight() != NULL)
@@ -187,7 +191,9 @@ int BinTree::remove(int value)
 				{
 					father->setRight(toRemove->getRight());
 				}
-				delete toRemove;
+				delete toRemove; cout << "3\n";
+				updateBF(root);
+				balanceCheck(root, NULL);
 				return 0;
 			}
 			else
@@ -201,7 +207,12 @@ int BinTree::remove(int value)
 					substitute = substitute->getLeft();
 				}
 				toRemove->setValue(substitute->getValue());
-				remove(substitute->getValue());
+				if (substitute->getRight() != NULL)
+				{
+					substitute->getRight()->setLeft(substitute->getLeft());
+				}
+				toRemove->getRight()->setLeft(substitute->getLeft());
+				delete substitute; cout << "4\n";
 			}
 		}
 	}

@@ -90,6 +90,11 @@ int main()
 	t.printPre(t.getRoot());
 	cout << endl;
 	
+	t.remove(6);
+	
+	t.printPre(t.getRoot());
+	cout << endl;
+	
 	return 0;
 }
 
