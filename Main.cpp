@@ -60,9 +60,12 @@ int main()
 	//loteria();
 	
 	BinTree t;
+	Tnode *pi = new Tnode;
+	Tnode *fa = new Tnode;
+	Tnode *pr = new Tnode;
 	
 	/* Exemplo de arvore balanceada */
-	/*
+	
 	t.insert(8);
 	t.insert(3);
 	t.insert(10);
@@ -72,15 +75,17 @@ int main()
 	t.insert(4);
 	t.insert(7);
 	t.insert(13);
-	*/
+	
 	
 	/* Exemplo de arvore nao balanceada */
+	/*
 	t.insert(100);
 	t.insert(90);
 	t.insert(80);
 	t.insert(70);
 	t.insert(60);
 	t.insert(50);
+	*/
 	
 	t.printPre(t.getRoot());
 	cout << endl;
@@ -95,6 +100,6 @@ int main()
  * [X] Filas
  * [X] Pilhas
  * [X] Arvore de busca binaria
- * [ ] Balanceamento de arvore
+ * [X] Balanceamento de arvore
  * [ ] Heap
  */

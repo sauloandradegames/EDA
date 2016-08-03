@@ -68,6 +68,7 @@ int BinTree::insert(int value)
 		{
 			// Caso arvore vazia: insira na raiz da arvore
 			root = toInsert;
+			balanceCheck(root, NULL);
 			return 0;
 		}
 		else
@@ -90,14 +91,14 @@ int BinTree::insert(int value)
 			{
 				where->setLeft(toInsert);
 				updateBF(root);
-				balanceCheck(root);
+				balanceCheck(root, NULL);
 				return 0;
 			}
 			else
 			{
 				where->setRight(toInsert);
 				updateBF(root);
-				balanceCheck(root);
+				balanceCheck(root, NULL);
 				return 0;
 			}
 		}
@@ -330,12 +331,10 @@ void BinTree::printPost(Tnode *node)
 	}
 }
 
-void BinTree::balanceCheck(Tnode *node)
+void BinTree::balanceCheck(Tnode *node, Tnode *prenode)
 {
 	/* Verifica se a arvore de raiz node esta balanceada
-	 * Isso eh feito efetuando-se um percurso em profundidade pela arvore.
-	 * Cada node da arvore deve ter BF = -1, 0, 1
-	 * Caso isso nao aconteca para algum node, aplica-se as devidas rotacoes
+	 * Caso contrario, executa as rotacoes necessarias
 	 */
 	if (node != NULL)
 	{
@@ -343,91 +342,99 @@ void BinTree::balanceCheck(Tnode *node)
 		{
 			if (node->getLeft()->getBalanceFactor() == 1)
 			{
-				//cout << node->getValue() << " Rotacao direita \n";
-				rotateRight(node, node->getLeft());
-				updateBF(node);
+				rotateRight(prenode, node, node->getLeft());
 			}
 			else if (node->getLeft()->getBalanceFactor() == -1)
 			{
-				//cout << node->getValue() << " Rotacao dupla a direita \n";
-				rotateDoubleRight(node, node->getLeft());
-				updateBF(node);
+				rotateDoubleLeft(prenode, node, node->getLeft());
 			}
 		}
 		else if (node->getBalanceFactor() == -2)
 		{
-			if (node->getRight()->getBalanceFactor() == -1)
+			if (node->getRight()->getBalanceFactor() == 1)
 			{
-				//cout << node->getValue() << " Rotacao esquerda \n";
-				rotateLeft(node, node->getRight());
-				updateBF(node);
+				rotateDoubleRight(prenode, node, node->getRight());
 			}
-			else if (node->getRight()->getBalanceFactor() == 1)
+			else if (node->getRight()->getBalanceFactor() == -1)
 			{
-				//cout << node->getValue() << " Rotacao dupla a esquerda \n";
-				rotateDoubleLeft(node, node->getRight());
-				updateBF(node);
+				rotateLeft(prenode, node, node->getRight());
 			}
 		}
-		balanceCheck(node->getLeft());
-		balanceCheck(node->getRight());
+		balanceCheck(node->getLeft(), node);
+		balanceCheck(node->getRight(), node);
 	}
 }
 
-void BinTree::rotateLeft(Tnode *father, Tnode *pivot)
+void BinTree::rotateLeft(Tnode *preroot, Tnode *father, Tnode *pivot)
 {
-	/* Executa rotacao esquerda na arvore de raiz father */
+	/* Executa rotacao a esquerda na arvore de raiz father.
+	 * Requer father.getRight() == pivot
+	 * Requer father.getBalanceFactor == -2 && pivot.getBalanceFactor == -1
+	 * preroot precisa ser pai de father antes da rotacao.
+	 * preroot eh reconectado a pivot apos a rotacao.
+	 */
 	father->setRight(pivot->getLeft());
 	pivot->setLeft(father);
-	
-/*
-//Rotacao a esquerda
-Pai(-2) [Root]
-FD(-1) [Pivot]
-Root->setRight(Pivot->getLeft())
-Pivot->setLeft(Root)
-*/
+	if (preroot == NULL)
+	{
+		setRoot(pivot);
+	}
+	else if (preroot->getLeft() == father)
+	{
+		preroot->setLeft(pivot);
+	}
+	else if (preroot->getRight() == father)
+	{
+		preroot->setRight(pivot);
+	}
+	updateBF(root);
 }
 
-void BinTree::rotateRight(Tnode *father, Tnode *pivot)
+void BinTree::rotateRight(Tnode *preroot, Tnode *father, Tnode *pivot)
 {
-	/* Executa rotacao direita na arvore de raiz father */
+	/* Executa rotacao direita na arvore de raiz father
+	 * Requer father.getLeft() == pivot
+	 * Requer father.getBalanceFactor() == +2 && pivot.getBalanceFactor() == +1
+	 * preroot precisa ser pai de father antes da rotacao
+	 * preroot eh reconectado a pivot apos a rotacao
+	 */
 	father->setLeft(pivot->getRight());
 	pivot->setRight(father);
-	
-/*
-// Rotacao a direita
-Pai(+2) [Root]
-FE(+1) [Pivot]
-Root->setLeft(Pivot->getRight())
-Pivot->setRight(Root)
-*/
+	if (preroot == NULL)
+	{
+		setRoot(pivot);
+	}
+	else if (preroot->getLeft() == father)
+	{
+		preroot->setLeft(pivot);
+	}
+	else if (preroot->getRight() == father)
+	{
+		preroot->setRight(pivot);
+	}
+	updateBF(root);
 }
 
-void BinTree::rotateDoubleLeft(Tnode *father, Tnode *pivot)
+void BinTree::rotateDoubleLeft(Tnode *preroot, Tnode *father, Tnode *pivot)
 {
-	/* Executa rotacao dupla a esquerda na arvore de raiz father */
-	rotateLeft(pivot, pivot->getRight());
-	rotateRight(father, father->getLeft());
-	
-/*
-//Rotacao dupla a direita
-Pai(+2)
-FE(-1)
-Esquerda no filho a esquerda, direita no pai
-*/
+	/* Executa rotacao dupla a esquerda na arvore de raiz father
+	 * Requer father.getLeft() == pivot
+	 * Requer father.getBalanceFactor() == +2 && pivot.getBalanceFactor() == -1
+	 * preroot precisa ser pai de father antes da rotacao
+	 * preroot eh reconectado a pivot apos a rotacao
+	 */
+	rotateLeft(father, pivot, pivot->getRight());
+	rotateRight(preroot, father, father->getLeft());
 }
 
-void BinTree::rotateDoubleRight(Tnode *father, Tnode *pivot)
+void BinTree::rotateDoubleRight(Tnode *preroot, Tnode *father, Tnode *pivot)
 {
-	/* Executa rotacao dupla a direita na arvore de raiz father */
-	rotateRight(pivot, pivot->getLeft());
-	rotateLeft(father, father->getRight());
-	
-/*
-//Rotacao dupla a esquerda
-Pai(-1)
-FD(+1)
-direita no filho a direita, esquerda no pai
-*/
+	/* Executa rotacao dupla a direita na arvore de raiz father
+	 * Requer father.getRight() == pivot
+	 * Requer father.getBalanceFactor() == -2 && pivot.getBalanceFactor() == +1
+	 * preroot precisa ser pai de father antes da rotacao
+	 * preroot eh reconectado a pivot apos a rotacao
+	 */
+	rotateRight(father, pivot, pivot->getLeft());
+	rotateLeft(preroot, father, father->getRight());
 }
